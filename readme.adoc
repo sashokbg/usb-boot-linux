@@ -1,0 +1,55 @@
+= Creating a Multi-Linux Boot Flash
+
+. Format with parted like so:
+
+```
+Number  Start   End     Size    Type     File system     Flags
+ 1      1049kB  315MB   314MB   primary  fat32           esp
+ 2      315MB   827MB   513MB   primary  linux-swap(v1)
+ 3      827MB   9569MB  8742MB  primary  ext4
+ 4      9569MB  15,9GB  6380MB  primary
+```
+
+Where partition 3 and 4 and so on are linux installations.
+
+. Mount usb
+.. mount /dev/sda3 /mnt/usb
+.. mount /dev/sda1 /mnt/usb/boot
+
+. Install archlinux 
+
+https://wiki.archlinux.org/title/Install_Arch_Linux_on_a_removable_medium
+
+https://wiki.archlinux.org/title/Installation_guide
+
+. Changeroot
+
+sudo arch-chroot /mnt/usb
+
+
+. DD Another distro to /dev/sda4
+
+. Manually add entries in grub
+
+vim /etc/grub.d/40_custom
+
+```
+menuentry "Ubuntu Installer" {
+   search --no-floppy --set=root --label "Ubuntu 20.04.4 LTS amd64"
+   linux /casper/vmlinuz boot=casper
+   initrd /casper/initrd
+}
+```
+
+== Extras
+
+Add an image to grub:
+
+cp arch.png /mnt/boot/arch.png
+
+== Troubleshoot
+
+If everything gets broken and you need to boot from UFI console:
+
+https://linuxhint.com/use-uefi-interactive-shell-and-its-common-commands/
+
